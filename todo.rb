@@ -6,6 +6,7 @@ require "sinatra/content_for"
 configure do
   enable :sessions
   set :session_secret, 'secret'
+  set :erb, :escape_html => true
 end
 
 helpers do
@@ -37,6 +38,10 @@ helpers do
     lists.sort_by! do |list|
       todos_remaining(list).to_r rescue 0
     end
+  end
+
+  def invalid_id?(id)
+    id > session[:lists].size
   end
 end
 
@@ -78,8 +83,15 @@ end
 get "/lists/:id" do
   id = params[:id].to_i
   @current_list = session[:lists][id]
+  error = invalid_id?(id)
 
-  erb :single_list, layout: :layout
+  if error
+    session[:error] = "Unable to locate that list!"
+    redirect "/lists"
+  else
+    erb :single_list, layout: :layout
+  end
+  
 end
 
 # Render the edit list form

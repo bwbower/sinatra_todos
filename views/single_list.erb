@@ -17,7 +17,7 @@
     <ul>
       <% @current_list[:todos] = sort_todos(@current_list) %>
       <% @current_list[:todos].each_with_index do |item, index| %>
-        <li class=<%= "complete" if item[:completed] %>>
+        <li class=<%= item[:completed] ? "complete" : "" %>>
           <form action="/lists/<%= params[:id] %>/todos/<%= index %>" method="post" class="check">
             <input type="hidden" name="completed" value="">
             <button type="submit">Complete</button>
